@@ -5,7 +5,20 @@ import (
     "math/rand"
     "reflect"
     "testing"
+    "time"
 )
+
+func init() {
+    seed := time.Now().Unix()
+    rand.Seed(seed)
+}
+
+func perm(n int) (out []int) {
+    for _, v := range rand.Perm(n) {
+        out = append(out, v)
+    }
+    return
+}
 
 func TestMSort(t *testing.T) {
     expected := []int{3, 9, 10, 27, 38, 43, 82}
@@ -32,7 +45,9 @@ func BenchmarkMSort10000(b *testing.B) {
 
 func benchmarkMSort(i int, b *testing.B) {
     for j := 0; j < b.N; j++ {
-        values := rand.Perm(i)
+        b.StopTimer()
+        values := perm(i)
+        b.StartTimer()
         mergesort.Sort(values)
     }
 }
